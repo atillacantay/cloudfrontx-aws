@@ -1,14 +1,20 @@
 {
-  "name": "shop-aws-backend",
+  "name": "shop-aws",
   "version": "0.1.0",
   "bin": {
-    "shop-aws-backend": "bin/shop-aws-backend.js"
+    "shop-aws": "bin/shop-aws.js"
   },
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "synth": "npx aws-cdk synth",
+    "bootstrap": "npx aws-cdk bootstrap",
+    "deploy": "npx aws-cdk deploy",
+    "deploy:service": "npx aws-cdk deploy ProductServiceStack",
+    "deploy:app": "npx aws-cdk deploy CloudXAppStack",
+    "destroy": "npx aws-cdk destroy"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
