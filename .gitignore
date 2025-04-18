@@ -4,6 +4,9 @@
 node_modules
 .env
 
+# Distribution directory
+dist/
+
 # CDK asset staging directory
 .cdk.staging
 cdk.out
