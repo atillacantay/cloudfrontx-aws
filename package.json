@@ -14,7 +14,9 @@
     "deploy": "npx aws-cdk deploy",
     "deploy:service": "npx aws-cdk deploy ProductServiceStack",
     "deploy:app": "npx aws-cdk deploy CloudXAppStack",
-    "destroy": "npx aws-cdk destroy"
+    "destroy": "npx aws-cdk destroy",
+    "invalidate:cloudfront": "aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths '/*'",
+    "upload-to-s3": "npm run build && aws s3 sync ./resources/build s3://$BUCKET_NAME --delete && npm run invalidate:cloudfront"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
