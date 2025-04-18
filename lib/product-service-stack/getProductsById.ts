@@ -1,36 +1,35 @@
-import { products } from "./mock-products";
+import { APIGatewayEvent } from "./types";
+import { ProductService } from "./services/product-service";
+import {
+  formatSuccessResponse,
+  formatErrorResponse,
+} from "./utils/response-formatter";
 
-export async function main(event: { pathParameters: { productId: string } }) {
+const productService = new ProductService();
+
+export const main = async (event: APIGatewayEvent) => {
+  console.log("Received event:", JSON.stringify(event, null, 2));
+
   try {
     const productId = event.pathParameters?.productId;
 
     if (!productId) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ message: "Product ID is required" }),
-      };
+      return formatErrorResponse("Product ID is required", 400);
     }
 
-    const product = products.find((p) => p.id === productId);
+    const product = await productService.getProductById(productId);
 
     if (!product) {
-      return {
-        statusCode: 404,
-        body: JSON.stringify({ message: "Product not found" }),
-      };
+      return formatErrorResponse("Product not found", 404);
     }
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify(product),
-    };
+    return formatSuccessResponse(product);
   } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        message: "Internal server error",
-        error: (error as any).message,
-      }),
-    };
+    console.error("Error in getProductsById:", error);
+    return formatErrorResponse(
+      "Internal server error",
+      500,
+      error instanceof Error ? error.message : "Unknown error"
+    );
   }
-}
+};

@@ -1,12 +1,23 @@
-import { products } from "./mock-products";
+import { ProductService } from "./services/product-service";
+import {
+  formatSuccessResponse,
+  formatErrorResponse,
+} from "./utils/response-formatter";
 
-export async function main() {
-  return {
-    body: JSON.stringify(products),
-    statusCode: 200,
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-    },
-  };
-}
+const productService = new ProductService();
+
+export const main = async () => {
+  console.log("getProductsList Lambda invoked");
+
+  try {
+    const products = await productService.getProducts();
+    return formatSuccessResponse(products);
+  } catch (error) {
+    console.error("Error in getProductsList:", error);
+    return formatErrorResponse(
+      "Internal server error",
+      500,
+      error instanceof Error ? error.message : "Unknown error"
+    );
+  }
+};
