@@ -1,0 +1,155 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Product Service API",
+    "description": "API for managing products in the shop application",
+    "version": "1.0.0",
+    "contact": {
+      "name": "API Support"
+    }
+  },
+  "servers": [
+    {
+      "url": "{apiUrl}",
+      "variables": {
+        "apiUrl": {
+          "default": "https://example.execute-api.region.amazonaws.com/prod"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/products": {
+      "get": {
+        "summary": "Retrieves all products",
+        "description": "Returns a list of all available products",
+        "operationId": "getProducts",
+        "responses": {
+          "200": {
+            "description": "A list of products",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{productId}": {
+      "get": {
+        "summary": "Retrieves a specific product by ID",
+        "description": "Returns a single product based on the ID provided in the path",
+        "operationId": "getProductById",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "productId",
+            "required": true,
+            "description": "ID of the product to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A product object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing product ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Product": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the product"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the product"
+          },
+          "description": {
+            "type": "string",
+            "description": "Product description"
+          },
+          "price": {
+            "type": "number",
+            "description": "Price of the product"
+          }
+        },
+        "required": ["id", "title", "price"]
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Error message"
+          },
+          "error": {
+            "type": "string",
+            "description": "Detailed error information"
+          }
+        },
+        "required": ["message"]
+      }
+    }
+  }
+}
