@@ -2,8 +2,8 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import {
   DynamoDBDocumentClient,
   GetCommand,
-  PutCommand,
   ScanCommand,
+  TransactWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
 import {
   CreateProductRequest,
@@ -99,20 +99,28 @@ export class ProductService {
         price: productData.price,
       };
 
-      const productCommand = new PutCommand({
-        TableName: productsTableName,
-        Item: product,
+      // Using transaction to ensure both operations succeed or fail together
+      const transactCommand = new TransactWriteCommand({
+        TransactItems: [
+          {
+            Put: {
+              TableName: productsTableName,
+              Item: product,
+            },
+          },
+          {
+            Put: {
+              TableName: stockTableName,
+              Item: {
+                product_id: productId,
+                count: productData.count,
+              },
+            },
+          },
+        ],
       });
-      await docClient.send(productCommand);
 
-      const stockCommand = new PutCommand({
-        TableName: stockTableName,
-        Item: {
-          product_id: productId,
-          count: productData.count,
-        },
-      });
-      await docClient.send(stockCommand);
+      await docClient.send(transactCommand);
 
       return {
         ...product,
