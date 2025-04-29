@@ -99,8 +99,6 @@ export class ProductService {
         price: productData.price,
       };
 
-      console.log({ productsTableName, stockTableName });
-
       const productCommand = new PutCommand({
         TableName: productsTableName,
         Item: product,
