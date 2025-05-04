@@ -7,8 +7,10 @@ const config: webpack.Configuration = {
   mode: process.env.NODE_ENV === "production" ? "production" : "development",
   devtool: "source-map",
   entry: {
+    createProduct: "./lib/product-service-stack/createProduct.ts",
     getProductsList: "./lib/product-service-stack/getProductsList.ts",
     getProductsById: "./lib/product-service-stack/getProductsById.ts",
+    initializeDb: "./lib/product-service-stack/initialize-db.ts",
   },
   output: {
     path: path.resolve(__dirname, "dist"),

@@ -49,6 +49,54 @@
             }
           }
         }
+      },
+      "post": {
+        "summary": "Creates a new product",
+        "description": "Creates a new product with the provided details and returns the created product",
+        "operationId": "createProduct",
+        "requestBody": {
+          "description": "Product information",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Product created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductWithStock"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/products/{productId}": {
@@ -135,6 +183,54 @@
           }
         },
         "required": ["id", "title", "price"]
+      },
+      "ProductWithStock": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the product"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the product"
+          },
+          "description": {
+            "type": "string",
+            "description": "Product description"
+          },
+          "price": {
+            "type": "number",
+            "description": "Price of the product"
+          },
+          "count": {
+            "type": "integer",
+            "description": "Available quantity of the product"
+          }
+        },
+        "required": ["id", "title", "price", "count"]
+      },
+      "CreateProductRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the product"
+          },
+          "description": {
+            "type": "string",
+            "description": "Product description"
+          },
+          "price": {
+            "type": "number",
+            "description": "Price of the product"
+          },
+          "count": {
+            "type": "integer",
+            "description": "Initial available quantity of the product"
+          }
+        },
+        "required": ["title", "description", "price", "count"]
       },
       "Error": {
         "type": "object",

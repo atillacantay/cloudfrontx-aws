@@ -1,4 +1,4 @@
-import { APIGatewayEvent } from "./types";
+import type { APIGatewayProxyEvent } from "aws-lambda";
 import { ProductService } from "./services/product-service";
 import {
   formatSuccessResponse,
@@ -7,7 +7,7 @@ import {
 
 const productService = new ProductService();
 
-export const main = async (event: APIGatewayEvent) => {
+export const main = async (event: APIGatewayProxyEvent) => {
   console.log("Received event:", JSON.stringify(event, null, 2));
 
   try {
