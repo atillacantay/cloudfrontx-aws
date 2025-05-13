@@ -1,0 +1,98 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Import Service API",
+    "description": "API for importing products into the shop application",
+    "version": "1.0.0",
+    "contact": {
+      "name": "API Support"
+    }
+  },
+  "servers": [
+    {
+      "url": "{apiUrl}",
+      "variables": {
+        "apiUrl": {
+          "default": "https://example.execute-api.region.amazonaws.com/prod"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/import": {
+      "get": {
+        "summary": "Get a signed URL for file upload",
+        "description": "Returns a pre-signed URL that allows uploading a CSV file to S3",
+        "operationId": "importProductsFile",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "required": true,
+            "description": "Name of the CSV file to be uploaded",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pre-signed URL for file upload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "uploadUrl": {
+                      "type": "string",
+                      "description": "Pre-signed S3 URL for uploading the CSV file"
+                    }
+                  },
+                  "required": ["uploadUrl"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Error message"
+          },
+          "error": {
+            "type": "string",
+            "description": "Detailed error information"
+          }
+        },
+        "required": ["message"]
+      }
+    }
+  }
+}
