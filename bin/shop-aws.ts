@@ -7,18 +7,23 @@ import { ImportServiceStack } from "../lib/import-service-stack/import-service-s
 
 const app = new cdk.App();
 
-new ProductServiceStack(app, "ProductServiceStack", {
-  env: {
-    account: process.env.CDK_DEFAULT_ACCOUNT,
-    region: process.env.CDK_DEFAULT_REGION,
-  },
-});
+const productServiceStack = new ProductServiceStack(
+  app,
+  "ProductServiceStack",
+  {
+    env: {
+      account: process.env.CDK_DEFAULT_ACCOUNT,
+      region: process.env.CDK_DEFAULT_REGION,
+    },
+  }
+);
 
 new ImportServiceStack(app, "ImportServiceStack", {
   env: {
     account: process.env.CDK_DEFAULT_ACCOUNT,
     region: process.env.CDK_DEFAULT_REGION,
   },
+  catalogItemsQueue: productServiceStack.catalogItemsQueue,
 });
 
 new CloudXAppStack(app, "CloudXAppStack", {
