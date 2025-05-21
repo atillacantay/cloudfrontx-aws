@@ -11,6 +11,7 @@ const config: webpack.Configuration = {
     getProductsList: "./lib/product-service-stack/getProductsList.ts",
     getProductsById: "./lib/product-service-stack/getProductsById.ts",
     initializeDb: "./lib/product-service-stack/initialize-db.ts",
+    catalogBatchProcess: "./lib/product-service-stack/catalogBatchProcess.ts",
     importProductsFile: "./lib/import-service-stack/importProductsFile.ts",
     importFileParser: "./lib/import-service-stack/importFileParser.ts",
   },

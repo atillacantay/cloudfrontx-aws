@@ -4,13 +4,17 @@ import {
   CopyObjectCommand,
   DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
+import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
 import { S3Event } from "aws-lambda";
 import * as csv from "csv-parser";
+import { ProductWithStock } from "../product-service-stack/types";
 
 const s3Client = new S3Client({});
+const sqsClient = new SQSClient({ region: process.env.AWS_REGION });
 const BUCKET_NAME = process.env.BUCKET_NAME || "";
 const UPLOADED_FOLDER = process.env.UPLOADED_FOLDER || "uploaded";
 const PARSED_FOLDER = process.env.PARSED_FOLDER || "parsed";
+const CATALOG_ITEMS_QUEUE_URL = process.env.CATALOG_ITEMS_QUEUE_URL || "";
 
 export const main = async (event: S3Event): Promise<void> => {
   try {
@@ -45,9 +49,32 @@ export const main = async (event: S3Event): Promise<void> => {
         stream
           // @ts-ignore - csv-parser types don't match the S3 stream type
           .pipe(csv())
-          .on("data", (data: any) => {
-            // Log each record
-            console.log("Parsed CSV record:", JSON.stringify(data));
+          .on("data", async (data: any) => {
+            try {
+              const formattedData: ProductWithStock = {
+                ...data,
+                price: data.price ? Number(data.price) : 0,
+                count: data.count ? Number(data.count) : 0,
+              };
+
+              if (CATALOG_ITEMS_QUEUE_URL) {
+                await sqsClient.send(
+                  new SendMessageCommand({
+                    QueueUrl: CATALOG_ITEMS_QUEUE_URL,
+                    MessageBody: JSON.stringify(formattedData),
+                  })
+                );
+                console.log(
+                  `Event record sent to SQS: ${JSON.stringify(formattedData)}`
+                );
+              } else {
+                console.warn(
+                  "CATALOG_ITEMS_QUEUE_URL not set, skipping SQS send"
+                );
+              }
+            } catch (error) {
+              console.error("Error sending to SQS:", error);
+            }
           })
           .on("error", (error: Error) => {
             console.error("Error parsing CSV:", error);
