@@ -23,6 +23,12 @@ const sendSnsNotification = async (newProduct: ProductWithStock) => {
         message: "New product has been created",
         product: newProduct,
       }),
+      MessageAttributes: {
+        price: {
+          DataType: "Number",
+          StringValue: newProduct.price.toString(),
+        },
+      },
     })
   );
   console.log("SNS notification sent for product:", newProduct.id);

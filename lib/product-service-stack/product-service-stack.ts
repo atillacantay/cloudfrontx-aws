@@ -110,8 +110,20 @@ export class ProductServiceStack extends cdk.Stack {
       topicName: "create-product-topic",
     });
 
+    // Regular subscription - receives all messages
     createProductTopic.addSubscription(
       new sns_subscriptions.EmailSubscription("atilla_gul@epam.com")
+    );
+
+    // Filtered subscription - only receives messages for products with price > 100
+    createProductTopic.addSubscription(
+      new sns_subscriptions.EmailSubscription("atillacantay@gmail.com", {
+        filterPolicy: {
+          price: sns.SubscriptionFilter.numericFilter({
+            greaterThan: 100,
+          }),
+        },
+      })
     );
 
     const catalogBatchProcess = new lambda.Function(
