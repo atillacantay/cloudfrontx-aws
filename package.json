@@ -14,6 +14,7 @@
     "deploy": "npx aws-cdk deploy",
     "deploy:service": "npm run build:webpack && npx aws-cdk deploy ProductServiceStack",
     "deploy:import": "npm run build:webpack && npx aws-cdk deploy ImportServiceStack",
+    "deploy:authorization": "npm run build:webpack && npx aws-cdk deploy AuthorizationServiceStack",
     "deploy:app": "npx aws-cdk deploy CloudXAppStack",
     "destroy": "npx aws-cdk destroy",
     "invalidate:cloudfront": "aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths '/*'",
