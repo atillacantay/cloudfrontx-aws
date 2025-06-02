@@ -14,6 +14,7 @@ const config: webpack.Configuration = {
     catalogBatchProcess: "./lib/product-service-stack/catalogBatchProcess.ts",
     importProductsFile: "./lib/import-service-stack/importProductsFile.ts",
     importFileParser: "./lib/import-service-stack/importFileParser.ts",
+    basicAuthorizer: "./lib/authorization-service-stack/basicAuthorizer.ts",
   },
   output: {
     path: path.resolve(__dirname, "dist"),

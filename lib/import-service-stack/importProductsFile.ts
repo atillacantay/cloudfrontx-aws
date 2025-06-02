@@ -72,6 +72,6 @@ const getCorsHeaders = () => {
   return {
     "Access-Control-Allow-Origin": ALLOWED_ORIGINS,
     "Access-Control-Allow-Credentials": true,
-    "Access-Control-Allow-Methods": "GET",
+    "Access-Control-Allow-Methods": "GET, PUT, OPTIONS",
   };
 };

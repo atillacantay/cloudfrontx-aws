@@ -89,6 +89,21 @@ export class ImportServiceStack extends cdk.Stack {
       { prefix: "uploaded/" }
     );
 
+    const basicAuthorizerFunction = lambda.Function.fromFunctionArn(
+      this,
+      "BasicAuthorizer",
+      `arn:aws:lambda:${this.region}:${this.account}:function:AuthorizationServiceStack-BasicAuthorizer2B49C1FC-SUwC8BzGsY9g`
+    );
+
+    const authorizer = new apigateway.TokenAuthorizer(
+      this,
+      "ApiGatewayAuthorizer",
+      {
+        handler: basicAuthorizerFunction,
+        identitySource: "method.request.header.Authorization",
+      }
+    );
+
     const api = new apigateway.RestApi(this, "import-service-api", {
       restApiName: "Atilla's Import Service API",
       description: "This API serves the Import Service functions",
@@ -97,13 +112,24 @@ export class ImportServiceStack extends cdk.Stack {
     const importResource = api.root.addResource("import");
     importResource.addMethod(
       "GET",
-      new apigateway.LambdaIntegration(importProductsFile),
+      new apigateway.LambdaIntegration(importProductsFile, { proxy: true }),
       {
         requestParameters: {
           "method.request.querystring.name": true,
         },
+        authorizer: authorizer,
+        authorizationType: apigateway.AuthorizationType.CUSTOM,
       }
     );
+
+    importResource.addCorsPreflight({
+      allowOrigins: [
+        "https://d3tp9ygejbpchq.cloudfront.net",
+        "http://localhost:3008",
+      ],
+      allowMethods: ["GET", "PUT", "OPTIONS"],
+      allowCredentials: true,
+    });
 
     new cdk.CfnOutput(this, "ImportServiceApiUrl", {
       value: api.url,
